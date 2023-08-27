@@ -9,6 +9,12 @@ export const appRouter = t.router({
     const books = await pool.query("SELECT * FROM books");
     return books;
   }),
+  getABook: t.procedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input }) => {
+      console.log(input);
+      return {balls: 'lalal'}
+    }),
 });
 
-export type AppRouter = typeof appRouter
+export type AppRouter = typeof appRouter;
