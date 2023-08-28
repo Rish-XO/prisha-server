@@ -11,9 +11,14 @@ export const appRouter = t.router({
   }),
   getABook: t.procedure
     .input(z.object({ id: z.string() }))
-    .query(({ input }) => {
-      console.log(input);
-      return { balls: "lalal" };
+    .query(async ({ input }) => {
+      const book = await pool.query("SELECT * FROM books WHERE book_id  = $1", [
+        input.id,
+      ]);
+      console.log(book.rows);
+      if (book.rows.length > 0) {
+        return book.rows[0];
+      }
     }),
   create: t.procedure
     .input(
@@ -27,7 +32,7 @@ export const appRouter = t.router({
       })
     )
     .mutation(async ({ input }) => {
-      console.log(input);
+      // console.log(input);
       const newBook = await pool.query(
         "INSERT INTO books (title, author, time, description, image, pdf) VALUES ($1, $2, $3 ,$4 , $5 ,$6) RETURNING *",
         [
@@ -39,7 +44,7 @@ export const appRouter = t.router({
           input.pdf,
         ]
       );
-      console.log(newBook.rows[0]);
+      // console.log(newBook.rows[0]);
       return { id: newBook.rows[0].book_id };
     }),
 });
